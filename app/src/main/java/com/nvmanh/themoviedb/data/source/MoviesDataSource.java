@@ -43,6 +43,8 @@ public interface MoviesDataSource {
 
     Observable<MovieWrapper> getFavorites(int page, int limit);
 
+    Movie getFavorite(int id);
+
     void addFavorite(Movie movie);
 
     void removeFavorite(int id);

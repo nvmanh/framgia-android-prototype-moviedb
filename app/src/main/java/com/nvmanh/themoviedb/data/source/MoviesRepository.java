@@ -89,7 +89,7 @@ public class MoviesRepository implements MoviesDataSource {
 
     @Override
     public Observable<Movie> getMovie(int id) {
-        return mTasksLocalDataSource.getMovie(id);
+        return mTasksRemoteDataSource.getMovie(id);
     }
 
     @Override
@@ -107,6 +107,11 @@ public class MoviesRepository implements MoviesDataSource {
     @Override
     public Observable<MovieWrapper> getFavorites(int page, int limit) {
         return mTasksLocalDataSource.getMovies(page, limit);
+    }
+
+    @Override
+    public Movie getFavorite(int id) {
+        return mTasksLocalDataSource.getFavorite(id);
     }
 
     @Override

@@ -142,6 +142,16 @@ public class MoviesLocalDataSource implements MoviesDataSource {
     }
 
     @Override
+    public Movie getFavorite(int id) {
+        try {
+            return mDatabaseHelper.getCachedDao(Movie.class).queryForId(id);
+        } catch (SQLException e) {
+            Log.e(getClass().getName(), e.getMessage());
+        }
+        return null;
+    }
+
+    @Override
     public void addFavorite(Movie movie) {
         try {
             mDatabaseHelper.getCachedDao(Movie.class).createOrUpdate(movie);

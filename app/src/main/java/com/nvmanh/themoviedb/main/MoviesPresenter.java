@@ -47,7 +47,7 @@ public class MoviesPresenter implements MoviesContract.Presenter {
                 .subscribe(new SimpleSubscribe<MovieWrapper>() {
                     @Override
                     public void onSuccess(MovieWrapper movieWrapper) {
-                        if (movieWrapper == null || movieWrapper.getResults() == null) return;
+                        if (movieWrapper == null || movieWrapper.getPage() == mMoviesView.getCurrentPage() || movieWrapper.getResults() == null) return;
                         mMoviesView.setTotal(movieWrapper.getTotalResults());
                         mMoviesView.setCurrentPage(movieWrapper.getPage());
                         List<Movie> movies = movieWrapper.getResults();
@@ -80,16 +80,21 @@ public class MoviesPresenter implements MoviesContract.Presenter {
 
     @Override
     public void loadFavorites(int page) {
-        //mMoviesView.showLoading();
+//        mMoviesView.showLoading();
         Subscription subscription = mMoviesRepository.getFavorites(page, APIService.DEFAULT_LIMIT)
                 .subscribeOn(mBaseSchedulerProvider.computation())
                 .observeOn(mBaseSchedulerProvider.ui())
                 .subscribe(new SimpleSubscribe<MovieWrapper>() {
                     @Override
                     public void onSuccess(MovieWrapper movieWrapper) {
+                        if(movieWrapper.getPage() == mMoviesView.getCurrentPage()) return;
                         mMoviesView.setTotal(movieWrapper.getTotalResults());
                         mMoviesView.setCurrentPage(movieWrapper.getPage());
-                        mMoviesView.showMovies(movieWrapper.getResults());
+                        if(movieWrapper.getResults() == null || movieWrapper.getResults().isEmpty()){
+                            mMoviesView.showNoMovie();
+                        }else{
+                            mMoviesView.showMovies(movieWrapper.getResults());
+                        }
                     }
 
                     @Override

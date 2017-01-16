@@ -2,6 +2,8 @@ package com.nvmanh.themoviedb.base;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -11,12 +13,16 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
 import com.nvmanh.themoviedb.App;
 import com.nvmanh.themoviedb.R;
 import com.nvmanh.themoviedb.data.Movie;
+import com.nvmanh.themoviedb.databinding.FragmentMoviesBinding;
+import com.nvmanh.themoviedb.detail.MovieDetailActivity;
 import com.nvmanh.themoviedb.main.LoadingDialog;
 import com.nvmanh.themoviedb.main.MoviesAdapter;
 import com.nvmanh.themoviedb.main.MoviesContract;
+
 import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -32,18 +38,18 @@ public abstract class BaseFragment extends Fragment implements MoviesContract.Vi
     private boolean mLoading;
     private int mCurrentPage;
     private int mTotal = -1;
+    protected FragmentMoviesBinding binding;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
-            @Nullable Bundle savedInstanceState) {
-        RecyclerView recyclerView = new RecyclerView(getActivity());
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        //recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 2));
+                             @Nullable Bundle savedInstanceState) {
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_movies, container, false);
+        binding.list.setLayoutManager(new LinearLayoutManager(getActivity()));
         final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
-        recyclerView.setLayoutManager(linearLayoutManager);
-        recyclerView.setAdapter(new MoviesAdapter());
-        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+        binding.list.setLayoutManager(linearLayoutManager);
+        binding.list.setAdapter(new MoviesAdapter());
+        binding.list.addOnScrollListener(new RecyclerView.OnScrollListener() {
 
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
@@ -61,7 +67,7 @@ public abstract class BaseFragment extends Fragment implements MoviesContract.Vi
                 }
             }
         });
-        return recyclerView;
+        return binding.getRoot();
     }
 
     @Override
@@ -95,9 +101,10 @@ public abstract class BaseFragment extends Fragment implements MoviesContract.Vi
         mLoading = false;
         hideLoading();
         if (getView() == null) return;
-        RecyclerView recyclerView = (RecyclerView) getView();
-        ((MoviesAdapter) recyclerView.getAdapter()).setPresenter(mPresenter);
-        ((MoviesAdapter) recyclerView.getAdapter()).add(movies);
+        binding.list.setVisibility(View.VISIBLE);
+        binding.noMovie.setVisibility(View.GONE);
+        ((MoviesAdapter) binding.list.getAdapter()).setPresenter(mPresenter);
+        ((MoviesAdapter) binding.list.getAdapter()).add(movies);
     }
 
     @Override
@@ -124,8 +131,7 @@ public abstract class BaseFragment extends Fragment implements MoviesContract.Vi
     @Override
     public void onResume() {
         super.onResume();
-        RecyclerView recyclerView = (RecyclerView) getView();
-        if (mPresenter == null || recyclerView.getAdapter().getItemCount() != 0) return;
+        if (mPresenter == null || binding.list.getAdapter().getItemCount() != 0) return;
         mPresenter.subscribe();
     }
 
@@ -167,6 +173,15 @@ public abstract class BaseFragment extends Fragment implements MoviesContract.Vi
 
     @Override
     public void showDetail(Movie movie) {
-        Log.i("BaseFragment", "showDetail (169): ----------> " + 1);
+        Intent intent = new Intent(getActivity(), MovieDetailActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(Movie.class.getName(), movie);
+        intent.putExtras(bundle);
+        startActivity(intent);
+    }
+
+    @Override
+    public int getCurrentPage() {
+        return mCurrentPage;
     }
 }

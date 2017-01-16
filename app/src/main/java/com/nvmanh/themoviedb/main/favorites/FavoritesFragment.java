@@ -1,5 +1,7 @@
 package com.nvmanh.themoviedb.main.favorites;
 
+import android.view.View;
+
 import com.nvmanh.themoviedb.base.BaseFragment;
 
 /**
@@ -24,5 +26,16 @@ public class FavoritesFragment extends BaseFragment {
     @Override
     public void onTabSelected() {
         super.onTabSelected();
+        hideLoading();
+        if (binding == null || binding.list.getAdapter().getItemCount() > 0) return;
+        binding.list.setVisibility(View.GONE);
+        binding.noMovie.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void showNoMovie() {
+        hideLoading();
+        binding.list.setVisibility(View.GONE);
+        binding.noMovie.setVisibility(View.VISIBLE);
     }
 }

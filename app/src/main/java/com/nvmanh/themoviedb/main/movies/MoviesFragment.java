@@ -1,5 +1,7 @@
 package com.nvmanh.themoviedb.main.movies;
 
+import android.view.View;
+
 import com.nvmanh.themoviedb.base.BaseFragment;
 
 /**
@@ -19,5 +21,9 @@ public class MoviesFragment extends BaseFragment {
     @Override
     public boolean isFavoriteScreen() {
         return false;
+    }
+
+    @Override
+    public void showNoMovie() {
     }
 }

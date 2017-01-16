@@ -31,7 +31,11 @@ public interface MoviesContract {
 
         void setCurrentPage(int page);
 
+        int getCurrentPage();
+
         void setTotal(int total);
+
+        void showNoMovie();
     }
 
     interface Presenter extends BasePresenter {

@@ -3,11 +3,12 @@
     package="com.nvmanh.themoviedb">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
     <application
+        android:name=".App"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
-        android:name=".App"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
@@ -23,6 +24,8 @@
         <activity
             android:name=".main.MainActivity"
             android:screenOrientation="portrait" />
+        <activity
+            android:name=".detail.MovieDetailActivity"
+            android:screenOrientation="portrait" />
     </application>
-
 </manifest>

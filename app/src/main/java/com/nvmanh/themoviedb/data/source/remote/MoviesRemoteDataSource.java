@@ -114,6 +114,11 @@ public class MoviesRemoteDataSource implements MoviesDataSource {
     }
 
     @Override
+    public Movie getFavorite(int id) {
+        return null;
+    }
+
+    @Override
     public void addFavorite(Movie movie) {
         TASKS_SERVICE_DATA.put(movie.getId(), movie);
     }

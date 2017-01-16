@@ -1,5 +1,6 @@
 package com.nvmanh.themoviedb;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -7,6 +8,8 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Toast;
+
+import com.daimajia.androidanimations.library.Techniques;
 import com.nvmanh.themoviedb.base.BaseActivity;
 import com.nvmanh.themoviedb.data.Genre;
 import com.nvmanh.themoviedb.data.GenreWrapper;
@@ -16,7 +19,11 @@ import com.nvmanh.themoviedb.data.source.remote.RequestHelper;
 import com.nvmanh.themoviedb.main.MainActivity;
 import com.nvmanh.themoviedb.utils.SimpleSubscribe;
 import com.nvmanh.themoviedb.utils.schedulers.BaseSchedulerProvider;
+import com.viksaa.sssplash.lib.activity.AwesomeSplash;
+import com.viksaa.sssplash.lib.model.ConfigSplash;
+
 import java.util.List;
+
 import rx.Subscription;
 import rx.subscriptions.CompositeSubscription;
 
@@ -24,31 +31,38 @@ import rx.subscriptions.CompositeSubscription;
  * Created by FRAMGIA\nguyen.viet.manh on 12/01/2017.
  */
 
-public class SplashActivity extends BaseActivity {
+public class SplashActivity extends AwesomeSplash {
     private CompositeSubscription mSubscription;
     private MoviesRepository repository;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        LinearLayout.LayoutParams params =
-                new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
-                        LinearLayout.LayoutParams.MATCH_PARENT);
-        LinearLayout layout = new LinearLayout(this);
-        layout.setLayoutParams(params);
-        layout.setGravity(Gravity.CENTER);
-        ProgressBar mProgressBar = new ProgressBar(this);
-        mProgressBar.setLayoutParams(new ViewGroup.LayoutParams(150, 150));
-        mProgressBar.setIndeterminate(true);
-        layout.addView(mProgressBar);
-        setContentView(layout);
+        mSubscription = new CompositeSubscription();
+    }
+
+    @Override
+    public void initSplash(ConfigSplash configSplash) {
+        configSplash.setBackgroundColor(R.color.colorPrimary); //any color you want form colors.xml
+        //Customize Logo
+        configSplash.setLogoSplash(R.drawable.splash); //or any other drawable
+        configSplash.setAnimLogoSplashDuration(2000); //int ms
+        configSplash.setAnimLogoSplashTechnique(Techniques.Bounce);
+        //Customize Title
+        configSplash.setTitleSplash(getString(R.string.app_name));
+        configSplash.setTitleTextSize(30f); //float value
+        configSplash.setAnimTitleDuration(3000);
+        configSplash.setAnimTitleTechnique(Techniques.FlipInX);
+    }
+
+    @Override
+    public void animationsFinished() {
         repository = Injection.provideTasksRepository(this);
         List<Genre> genres = repository.getGenres();
         if (genres != null && !genres.isEmpty()) {
             startMain();
             return;
         }
-        mSubscription = new CompositeSubscription();
         BaseSchedulerProvider provider = Injection.provideSchedulerProvider();
         Subscription subscription = RequestHelper.getRequest()
                 .getGenres(APIService.API_KEY, null)
