@@ -4,6 +4,7 @@ import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
+import android.util.SparseArray;
 import com.nvmanh.themoviedb.Injection;
 import com.nvmanh.themoviedb.R;
 import com.nvmanh.themoviedb.base.BaseActivity;
@@ -30,22 +31,33 @@ public class MainActivity extends BaseActivity {
         mMainBinding.tabLayout.newTab().setText(R.string.playing_movies);
         mMainBinding.tabLayout.newTab().setText(R.string.favorite_movies);
         mMainBinding.tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
-        mMainBinding.pager.setAdapter(new MoviesPager(getSupportFragmentManager()));
+        SparseArray<BaseFragment> mFragments = new SparseArray<>();
+        mFragments.put(0, MoviesFragment.newInstance());
+        mFragments.put(1, FavoritesFragment.newInstance());
+        final MoviesPager pager = new MoviesPager(getSupportFragmentManager(), mFragments);
+        mMainBinding.pager.setAdapter(pager);
         mMainBinding.tabLayout.setupWithViewPager(mMainBinding.pager);
         mMainBinding.pager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
             @Override
             public void onPageSelected(int position) {
-                BaseFragment fragment = position == 0 ? MoviesFragment.getInstance()
-                        : FavoritesFragment.getInstance();
-                selectedTab(fragment);
+                selectedTab(pager.getItem(position));
             }
         });
         //for the first show
-        selectedTab(MoviesFragment.getInstance());
+        selectedTab(pager.getItem(0));
     }
 
     void selectedTab(BaseFragment fragment) {
         fragment.setPresenter(mPresenter);
         fragment.onTabSelected();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (mMainBinding.pager.getCurrentItem() != 0) {
+            mMainBinding.pager.setCurrentItem(0);
+        } else {
+            super.onBackPressed();
+        }
     }
 }

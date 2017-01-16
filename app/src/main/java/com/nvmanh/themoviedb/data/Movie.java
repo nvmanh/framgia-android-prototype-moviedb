@@ -51,6 +51,7 @@ public class Movie extends BaseModel {
     @DatabaseField
     @SerializedName(MoviesPersistenceContract.MovieEntry.COLUMN_NAME_VOTE_AVERAGE)
     private float mVoteAverage;
+    @DatabaseField
     private boolean favorite;
     @DatabaseField
     private String mGenreList;

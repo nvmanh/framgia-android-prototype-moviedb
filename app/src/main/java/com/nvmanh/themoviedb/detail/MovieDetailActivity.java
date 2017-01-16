@@ -36,7 +36,7 @@ public class MovieDetailActivity extends BaseActivity {
         Movie movie = (Movie) getIntent().getExtras().getSerializable(Movie.class.getName());
         MovieDetailFragment movieDetailFragment = (MovieDetailFragment) getSupportFragmentManager().findFragmentById(R.id.container);
         if (movieDetailFragment == null) {
-            movieDetailFragment = MovieDetailFragment.getInstance();
+            movieDetailFragment = MovieDetailFragment.newInstance();
             actionBar.setTitle(movie.getTitle());
             ActivityUtils.addFragmentToActivity(getSupportFragmentManager(), movieDetailFragment,
                     R.id.container);

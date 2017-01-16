@@ -1,13 +1,12 @@
 package com.nvmanh.themoviedb.utils;
 
-import android.util.Log;
 import rx.Subscriber;
 
 /**
- * Created by FRAMGIA\nguyen.viet.manh on 12/01/2017.
+ * Created by FRAMGIA\nguyen.viet.manh on 16/01/2017.
  */
 
-public abstract class SimpleSubscribe<T> extends Subscriber<T> {
+public abstract class LocalSubscribe<T> extends Subscriber<T> {
     private T mT;
 
     @Override
@@ -17,8 +16,9 @@ public abstract class SimpleSubscribe<T> extends Subscriber<T> {
 
     @Override
     public void onNext(T t) {
-        this.mT = t;
+        mT = t;
+        onCompleted();
     }
 
-    public abstract void onSuccess(T t);
+    public abstract void onSuccess(T mt);
 }

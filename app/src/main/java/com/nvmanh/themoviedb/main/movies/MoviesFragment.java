@@ -1,7 +1,6 @@
 package com.nvmanh.themoviedb.main.movies;
 
-import android.view.View;
-
+import android.os.Bundle;
 import com.nvmanh.themoviedb.base.BaseFragment;
 
 /**
@@ -9,13 +8,11 @@ import com.nvmanh.themoviedb.base.BaseFragment;
  */
 
 public class MoviesFragment extends BaseFragment {
-    private static MoviesFragment mSelf;
-
-    public static MoviesFragment getInstance() {
-        if (mSelf == null) {
-            mSelf = new MoviesFragment();
-        }
-        return mSelf;
+    public static MoviesFragment newInstance() {
+         Bundle args = new Bundle();
+         MoviesFragment fragment = new MoviesFragment();
+        fragment.setArguments(args);
+        return fragment;
     }
 
     @Override
@@ -25,5 +22,10 @@ public class MoviesFragment extends BaseFragment {
 
     @Override
     public void showNoMovie() {
+    }
+
+    @Override
+    protected void onLoad(int page) {
+        mPresenter.loadMovies(page);
     }
 }

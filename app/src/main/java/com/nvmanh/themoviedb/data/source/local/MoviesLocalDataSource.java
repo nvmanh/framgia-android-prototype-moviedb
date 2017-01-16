@@ -111,7 +111,8 @@ public class MoviesLocalDataSource implements MoviesDataSource {
                     wrapper.setTotalResults(total);
                     QueryBuilder<Movie, Integer> queryBuilder = dao.queryBuilder();
                     queryBuilder.offset((page - 1) * limit).limit(limit);
-                    wrapper.setResults(dao.query(queryBuilder.prepare()));
+                    List<Movie> movies = dao.query(queryBuilder.prepare());
+                    wrapper.setResults(movies);
                     subscriber.onNext(wrapper);
                 } catch (SQLException e) {
                     subscriber.onError(e);
@@ -222,5 +223,10 @@ public class MoviesLocalDataSource implements MoviesDataSource {
             Log.e(getClass().getName(), e.getMessage());
         }
         return builder.toString();
+    }
+
+    @Override
+    public Observable<MovieWrapper> getSimilarMovies(int movieId, int page) {
+        return null;
     }
 }

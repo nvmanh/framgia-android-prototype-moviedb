@@ -2,17 +2,15 @@ package com.nvmanh.themoviedb.main;
 
 import com.android.annotations.NonNull;
 import com.google.common.base.Preconditions;
-import com.nvmanh.themoviedb.data.Genre;
 import com.nvmanh.themoviedb.data.Movie;
 import com.nvmanh.themoviedb.data.MovieWrapper;
 import com.nvmanh.themoviedb.data.source.MoviesRepository;
 import com.nvmanh.themoviedb.data.source.remote.APIService;
-import com.nvmanh.themoviedb.utils.InternetUtil;
+import com.nvmanh.themoviedb.utils.Common;
+import com.nvmanh.themoviedb.utils.LocalSubscribe;
 import com.nvmanh.themoviedb.utils.SimpleSubscribe;
 import com.nvmanh.themoviedb.utils.schedulers.BaseSchedulerProvider;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import rx.Subscription;
 import rx.subscriptions.CompositeSubscription;
 
@@ -35,8 +33,8 @@ public class MoviesPresenter implements MoviesContract.Presenter {
     }
 
     @Override
-    public void loadMovies(int page) {
-        if (!InternetUtil.isConnectingToInternet()) {
+    public void loadMovies(final int page) {
+        if (!Common.isConnectingToInternet()) {
             mMoviesView.showNetworkError();
             return;
         }
@@ -47,26 +45,16 @@ public class MoviesPresenter implements MoviesContract.Presenter {
                 .subscribe(new SimpleSubscribe<MovieWrapper>() {
                     @Override
                     public void onSuccess(MovieWrapper movieWrapper) {
-                        if (movieWrapper == null || movieWrapper.getPage() == mMoviesView.getCurrentPage() || movieWrapper.getResults() == null) return;
+                        if (movieWrapper == null
+                                || movieWrapper.getPage() == mMoviesView.getCurrentPage()
+                                || movieWrapper.getResults() == null) {
+                            return;
+                        }
+                        if(page == 1) mMoviesView.clear();
                         mMoviesView.setTotal(movieWrapper.getTotalResults());
                         mMoviesView.setCurrentPage(movieWrapper.getPage());
                         List<Movie> movies = movieWrapper.getResults();
-                        List<Genre> genres = mMoviesRepository.getGenres();
-                        Map<Integer, Genre> map = new HashMap<>();
-                        for (Genre genre : genres) {
-                            map.put(genre.getId(), genre);
-                        }
-                        for (Movie movie : movies) {
-                            StringBuilder builder = new StringBuilder();
-                            for (int id : movie.getGenreIds()) {
-                                if (!map.containsKey(id)) continue;
-                                builder.append(map.get(id).getName()).append(",");
-                            }
-                            if (builder.length() > 0) {
-                                movie.setGenreList(
-                                        builder.toString().substring(0, builder.length() - 1));
-                            }
-                        }
+                        Common.updateGenres(movies, mMoviesRepository);
                         mMoviesView.showMovies(movies);
                     }
 
@@ -79,27 +67,31 @@ public class MoviesPresenter implements MoviesContract.Presenter {
     }
 
     @Override
-    public void loadFavorites(int page) {
-//        mMoviesView.showLoading();
+    public void loadFavorites(final int page) {
         Subscription subscription = mMoviesRepository.getFavorites(page, APIService.DEFAULT_LIMIT)
                 .subscribeOn(mBaseSchedulerProvider.computation())
                 .observeOn(mBaseSchedulerProvider.ui())
-                .subscribe(new SimpleSubscribe<MovieWrapper>() {
-                    @Override
-                    public void onSuccess(MovieWrapper movieWrapper) {
-                        if(movieWrapper.getPage() == mMoviesView.getCurrentPage()) return;
-                        mMoviesView.setTotal(movieWrapper.getTotalResults());
-                        mMoviesView.setCurrentPage(movieWrapper.getPage());
-                        if(movieWrapper.getResults() == null || movieWrapper.getResults().isEmpty()){
-                            mMoviesView.showNoMovie();
-                        }else{
-                            mMoviesView.showMovies(movieWrapper.getResults());
-                        }
-                    }
+                .subscribe(new LocalSubscribe<MovieWrapper>() {
 
                     @Override
                     public void onError(Throwable e) {
+                        mMoviesView.hideLoading();
                         mMoviesView.showError(e);
+                    }
+
+                    @Override
+                    public void onSuccess(MovieWrapper movieWrapper) {
+                        if (movieWrapper.getPage() == mMoviesView.getCurrentPage()) return;
+                        if(page == 1) mMoviesView.clear();
+                        mMoviesView.hideLoading();
+                        mMoviesView.setTotal(movieWrapper.getTotalResults());
+                        mMoviesView.setCurrentPage(movieWrapper.getPage());
+                        if (movieWrapper.getResults() == null || movieWrapper.getResults()
+                                .isEmpty()) {
+                            mMoviesView.showNoMovie();
+                        } else {
+                            mMoviesView.showMovies(movieWrapper.getResults());
+                        }
                     }
                 });
         mSubscriptions.add(subscription);

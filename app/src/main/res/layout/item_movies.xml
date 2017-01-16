@@ -29,20 +29,21 @@
             android:onClick="@{() -> presenter.onShowDetail(movies)}"
             android:orientation="horizontal"
             android:padding="@dimen/dp_10"
-            android:weightSum="5"
+            android:weightSum="3"
             >
             <ImageView
                 android:id="@+id/poster"
                 android:layout_width="0dp"
-                android:layout_height="@dimen/dp_200"
-                android:layout_weight="2"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:adjustViewBounds="true"
                 android:background="@drawable/bg_default"
                 />
             <LinearLayout
                 android:layout_width="0dp"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/dp_10"
-                android:layout_weight="3"
+                android:layout_weight="2"
                 android:orientation="vertical"
                 >
                 <LinearLayout

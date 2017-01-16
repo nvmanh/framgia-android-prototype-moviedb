@@ -21,7 +21,7 @@ import android.support.annotation.Nullable;
 import com.nvmanh.themoviedb.data.Genre;
 import com.nvmanh.themoviedb.data.Movie;
 import com.nvmanh.themoviedb.data.MovieWrapper;
-import com.nvmanh.themoviedb.utils.InternetUtil;
+import com.nvmanh.themoviedb.utils.Common;
 import java.util.List;
 import rx.Observable;
 
@@ -40,16 +40,16 @@ public class MoviesRepository implements MoviesDataSource {
     private static MoviesRepository INSTANCE = null;
 
     @NonNull
-    private final MoviesDataSource mTasksRemoteDataSource;
+    private final MoviesDataSource mMoviesRemoteDataSource;
 
     @NonNull
-    private final MoviesDataSource mTasksLocalDataSource;
+    private final MoviesDataSource mMoviesLocalDataSource;
 
     // Prevent direct instantiation.
     private MoviesRepository(@NonNull MoviesDataSource tasksRemoteDataSource,
             @NonNull MoviesDataSource tasksLocalDataSource) {
-        mTasksRemoteDataSource = checkNotNull(tasksRemoteDataSource);
-        mTasksLocalDataSource = checkNotNull(tasksLocalDataSource);
+        mMoviesRemoteDataSource = checkNotNull(tasksRemoteDataSource);
+        mMoviesLocalDataSource = checkNotNull(tasksLocalDataSource);
     }
 
     /**
@@ -76,74 +76,71 @@ public class MoviesRepository implements MoviesDataSource {
         INSTANCE = null;
     }
 
-    private boolean isNetworkAvailable() {
-        return InternetUtil.isConnectingToInternet();
-    }
-
     @Override
     public Observable<List<Movie>> getMovies() {
-        //return isNetworkAvailable() ? mTasksRemoteDataSource.getMovies()
-        //        : mTasksLocalDataSource.getMovies();
-        return mTasksRemoteDataSource.getMovies();
+        return mMoviesRemoteDataSource.getMovies();
     }
 
     @Override
     public Observable<Movie> getMovie(int id) {
-        return mTasksRemoteDataSource.getMovie(id);
+        return mMoviesRemoteDataSource.getMovie(id);
     }
 
     @Override
     public Observable<MovieWrapper> getMovies(int page, int limit) {
-        return mTasksRemoteDataSource.getMovies(page, limit);
+        return mMoviesRemoteDataSource.getMovies(page, limit);
     }
 
     @Override
     public Observable<List<Movie>> getFavorites() {
-        //return isNetworkAvailable() ? mTasksRemoteDataSource.getFavorites()
-        //        : mTasksLocalDataSource.getFavorites();
-        return mTasksLocalDataSource.getFavorites();
+        return mMoviesLocalDataSource.getFavorites();
     }
 
     @Override
     public Observable<MovieWrapper> getFavorites(int page, int limit) {
-        return mTasksLocalDataSource.getMovies(page, limit);
+        return mMoviesLocalDataSource.getFavorites(page, limit);
     }
 
     @Override
     public Movie getFavorite(int id) {
-        return mTasksLocalDataSource.getFavorite(id);
+        return mMoviesLocalDataSource.getFavorite(id);
     }
 
     @Override
     public void addFavorite(Movie movie) {
-        mTasksLocalDataSource.addFavorite(movie);
-        mTasksRemoteDataSource.addFavorite(movie);
+        mMoviesLocalDataSource.addFavorite(movie);
+        mMoviesRemoteDataSource.addFavorite(movie);
     }
 
     @Override
     public void removeFavorite(int id) {
-        mTasksRemoteDataSource.removeFavorite(id);
-        mTasksLocalDataSource.removeFavorite(id);
+        mMoviesRemoteDataSource.removeFavorite(id);
+        mMoviesLocalDataSource.removeFavorite(id);
     }
 
     @Override
     public void removeAllFavorites() {
-        mTasksLocalDataSource.removeAllFavorites();
-        mTasksRemoteDataSource.removeAllFavorites();
+        mMoviesLocalDataSource.removeAllFavorites();
+        mMoviesRemoteDataSource.removeAllFavorites();
     }
 
     @Override
     public void saveGenres(List<Genre> genres) {
-        mTasksLocalDataSource.saveGenres(genres);
+        mMoviesLocalDataSource.saveGenres(genres);
     }
 
     @Override
     public List<Genre> getGenres() {
-        return mTasksLocalDataSource.getGenres();
+        return mMoviesLocalDataSource.getGenres();
     }
 
     @Override
     public String getGenres(int... ids) {
-        return mTasksLocalDataSource.getGenres(ids);
+        return mMoviesLocalDataSource.getGenres(ids);
+    }
+
+    @Override
+    public Observable<MovieWrapper> getSimilarMovies(int movieId, int page) {
+        return mMoviesRemoteDataSource.getSimilarMovies(movieId, page);
     }
 }

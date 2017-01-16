@@ -1,21 +1,180 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
 
     <data>
 
         <variable
             name="movie"
-            type="com.nvmanh.themoviedb.data.Movie" />
+            type="com.nvmanh.themoviedb.data.Movie"
+            />
 
         <variable
             name="presenter"
-            type="com.nvmanh.themoviedb.detail.DetailContract.Presenter" />
+            type="com.nvmanh.themoviedb.detail.DetailContract.Presenter"
+            />
+        <import type="android.view.View" />
+        <import type="java.lang.String" />
     </data>
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:background="@color/grey"
+        android:scrollbars="none"
+        >
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            >
+            <ImageView
+                android:id="@+id/backdrop"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dp_300"
+                android:scaleType="fitXY"
+                />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="top"
+                android:orientation="horizontal"
+                android:padding="@dimen/dp_5"
+                android:weightSum="3"
+                >
+                <ImageView
+                    android:id="@+id/poster"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="top"
+                    android:layout_weight="1"
+                    android:scaleType="centerInside"
+                    />
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/dp_10"
+                    android:layout_weight="2"
+                    android:orientation="vertical"
+                    >
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:padding="@dimen/dp_10"
+                        >
 
-    </LinearLayout>
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:text="@{movie.title}"
+                            android:textColor="@android:color/black"
+                            android:textSize="@dimen/dp_24"
+                            />
+                        <ImageView
+                            android:id="@+id/like"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="@dimen/dp_10"
+                            android:background="@{movie.favorite?@drawable/like:@drawable/dislike}"
+                            android:onClick="@{() -> presenter.onFavoriteChanged()}"
+                            />
+                    </LinearLayout>
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/dp_5"
+                        android:text="@string/adult"
+                        android:textColor="@color/fillColor"
+                        android:textSize="@dimen/sp_18"
+                        android:visibility="@{movie.adult?View.VISIBLE:View.GONE}"
+                        />
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/dp_5"
+                        android:text="@string/release_on"
+                        android:textColor="@android:color/black"
+                        android:textSize="@dimen/sp_18"
+                        />
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/dp_5"
+                        android:text="@{movie.releaseDate}"
+                        android:textSize="@dimen/sp_14"
+                        />
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/dp_5"
+                        android:text="@string/ratings"
+                        android:textColor="@android:color/black"
+                        android:textSize="@dimen/sp_18"
+                        />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/dp_5"
+                        android:drawablePadding="@dimen/dp_3"
+                        android:drawableRight="@drawable/icon_star"
+                        android:text="@{String.valueOf(movie.voteAverage)}"
+                        android:textSize="@dimen/sp_14"
+                        />
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/dp_5"
+                        android:text="@string/genres_s"
+                        android:textColor="@android:color/black"
+                        android:textSize="@dimen/sp_18"
+                        />
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/dp_5"
+                        android:text="@{movie.genreList}"
+                        android:textSize="@dimen/sp_14"
+                        />
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/dp_5"
+                        android:text="@string/overview"
+                        android:textColor="@android:color/black"
+                        android:textSize="@dimen/sp_18"
+                        />
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginTop="@dimen/dp_5"
+                        android:text="@{movie.overview}"
+                        android:textSize="@dimen/sp_14"
+                        />
+                </LinearLayout>
+            </LinearLayout>
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                >
+                <ProgressBar
+                    android:id="@+id/loading"
+                    android:layout_width="@dimen/dp_40"
+                    android:layout_height="@dimen/dp_40"
+                    android:layout_gravity="center"
+                    android:layout_margin="@dimen/dp_10"
+                    android:indeterminate="true"
+                    android:indeterminateBehavior="repeat"
+                    />
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/similar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="@dimen/dp_5"
+                    android:paddingRight="@dimen/dp_5"
+                    />
+            </FrameLayout>
+        </LinearLayout>
+    </ScrollView>
 </layout>

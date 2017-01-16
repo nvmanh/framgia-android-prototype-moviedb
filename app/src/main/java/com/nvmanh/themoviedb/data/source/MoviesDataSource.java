@@ -56,4 +56,6 @@ public interface MoviesDataSource {
     List<Genre> getGenres();
 
     String getGenres(int... ids);
+
+    Observable<MovieWrapper> getSimilarMovies(int movieId, int page);
 }

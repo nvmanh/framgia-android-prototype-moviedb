@@ -4,4 +4,9 @@
     <string name="more_info">More info</string>
     <string name="playing_movies">Now Playing</string>
     <string name="favorite_movies">Favorites</string>
+    <string name="overview">Overview</string>
+    <string name="adult">18+</string>
+    <string name="genres_s">Genres</string>
+    <string name="release_on">Release on</string>
+    <string name="ratings">Ratings</string>
 </resources>

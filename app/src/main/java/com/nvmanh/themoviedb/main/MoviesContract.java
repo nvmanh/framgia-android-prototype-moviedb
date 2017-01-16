@@ -36,6 +36,8 @@ public interface MoviesContract {
         void setTotal(int total);
 
         void showNoMovie();
+
+        void clear();
     }
 
     interface Presenter extends BasePresenter {

@@ -6,8 +6,8 @@ import android.view.ViewGroup;
 import com.bumptech.glide.Glide;
 import com.nvmanh.themoviedb.R;
 import com.nvmanh.themoviedb.data.Movie;
-import com.nvmanh.themoviedb.data.source.remote.APIService;
 import com.nvmanh.themoviedb.databinding.ItemMoviesBinding;
+import com.nvmanh.themoviedb.utils.Common;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -62,11 +62,9 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesHold
         void bind(Movie movie) {
             mItemMoviesBinding.setMovies(movie);
             mItemMoviesBinding.setPresenter(mPresenter);
-            String image =
-                    String.format(APIService.IMAGE_URL, movie.getPosterPath(), APIService.API_KEY);
             Glide.with(itemView.getContext())
-                    .load(image)
-                    .centerCrop()
+                    .load(Common.getImageMovie(movie.getPosterPath()))
+                    .fitCenter()
                     .placeholder(R.drawable.bg_default)
                     .into(mItemMoviesBinding.poster);
         }

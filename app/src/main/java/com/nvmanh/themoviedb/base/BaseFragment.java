@@ -34,18 +34,17 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public abstract class BaseFragment extends Fragment implements MoviesContract.View {
     private LoadingDialog mLoadingDialog;
     private AlertDialog mAlertDialog;
-    private MoviesContract.Presenter mPresenter;
+    protected MoviesContract.Presenter mPresenter;
     private boolean mLoading;
-    private int mCurrentPage;
+    protected int mCurrentPage;
     private int mTotal = -1;
     protected FragmentMoviesBinding binding;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
-                             @Nullable Bundle savedInstanceState) {
+            @Nullable Bundle savedInstanceState) {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_movies, container, false);
-        binding.list.setLayoutManager(new LinearLayoutManager(getActivity()));
         final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
         binding.list.setLayoutManager(linearLayoutManager);
         binding.list.setAdapter(new MoviesAdapter());
@@ -62,13 +61,15 @@ public abstract class BaseFragment extends Fragment implements MoviesContract.Vi
                 if (!mLoading && lastVisibleItem == totalItem - 1) {
                     mLoading = true;
                     // Scrolled to bottom. Do something here.
-                    mPresenter.loadMovies(mCurrentPage + 1);
+                    onLoad(mCurrentPage + 1);
                     mLoading = false;
                 }
             }
         });
         return binding.getRoot();
     }
+
+    protected abstract void onLoad(int page);
 
     @Override
     public void setTotal(int total) {
@@ -138,7 +139,12 @@ public abstract class BaseFragment extends Fragment implements MoviesContract.Vi
     @Override
     public void onTabSelected() {
         if (mPresenter == null) return;
+        mPresenter.unSubscribe();
         mPresenter.setView(this);
+        if (binding ==null || binding.list.getAdapter().getItemCount() != 0) {
+            return;
+        }
+        mPresenter.subscribe();
     }
 
     @Override
@@ -183,5 +189,12 @@ public abstract class BaseFragment extends Fragment implements MoviesContract.Vi
     @Override
     public int getCurrentPage() {
         return mCurrentPage;
+    }
+
+    @Override
+    public void clear() {
+        if (binding == null) return;
+        setCurrentPage(0);
+        binding.list.setAdapter(new MoviesAdapter());
     }
 }

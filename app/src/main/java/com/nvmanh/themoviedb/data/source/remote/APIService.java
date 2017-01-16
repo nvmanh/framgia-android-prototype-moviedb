@@ -3,6 +3,7 @@ package com.nvmanh.themoviedb.data.source.remote;
 import com.nvmanh.themoviedb.data.GenreWrapper;
 import com.nvmanh.themoviedb.data.MovieWrapper;
 import retrofit2.http.GET;
+import retrofit2.http.Path;
 import retrofit2.http.Query;
 import rx.Observable;
 
@@ -23,4 +24,9 @@ public interface APIService {
     @GET("genre/movie/list")
     Observable<GenreWrapper> getGenres(@Query("api_key") String apiKey,
             @Query("language") String languageCode);
+
+    @GET("movie/{movie_id}/similar")
+    Observable<MovieWrapper> getSimilarMovies(@Path("movie_id") int movieId,
+            @Query("api_key") String apiKey, @Query("language") String languageCode,
+            @Query("page") int page);
 }

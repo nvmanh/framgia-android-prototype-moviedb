@@ -51,8 +51,8 @@ public class SplashActivity extends AwesomeSplash {
         //Customize Title
         configSplash.setTitleSplash(getString(R.string.app_name));
         configSplash.setTitleTextSize(30f); //float value
-        configSplash.setAnimTitleDuration(3000);
-        configSplash.setAnimTitleTechnique(Techniques.FlipInX);
+        configSplash.setAnimTitleDuration(1000);
+        configSplash.setAnimTitleTechnique(Techniques.ZoomIn);
     }
 
     @Override

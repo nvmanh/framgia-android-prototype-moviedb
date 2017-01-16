@@ -34,8 +34,7 @@ public class MoviesRemoteDataSource implements MoviesDataSource {
 
     private static MoviesRemoteDataSource INSTANCE;
 
-    private static final int SERVICE_LATENCY_IN_MILLIS = 5000;
-
+    //using this for caching data for test, but not production
     private final static Map<Integer, Movie> TASKS_SERVICE_DATA;
 
     static {
@@ -60,15 +59,6 @@ public class MoviesRemoteDataSource implements MoviesDataSource {
         }
         return movies;
     }
-
-    //private List<Movie> toListMovieFavorite() {
-    //    List<Movie> movies = new ArrayList<>();
-    //    for (Map.Entry<Integer, Movie> entry : TASKS_SERVICE_DATA.entrySet()) {
-    //        if (!entry.getValue().isFavorite()) continue;
-    //        movies.add(entry.getValue());
-    //    }
-    //    return movies;
-    //}
 
     @Override
     public Observable<List<Movie>> getMovies() {
@@ -99,12 +89,6 @@ public class MoviesRemoteDataSource implements MoviesDataSource {
 
     @Override
     public Observable<List<Movie>> getFavorites() {
-        //return Observable.create(new Observable.OnSubscribe<List<Movie>>() {
-        //    @Override
-        //    public void call(Subscriber<? super List<Movie>> subscriber) {
-        //        subscriber.onNext(toListMovieFavorite());
-        //    }
-        //});
         return null;
     }
 
@@ -146,5 +130,12 @@ public class MoviesRemoteDataSource implements MoviesDataSource {
     @Override
     public String getGenres(int... ids) {
         return null;
+    }
+
+    @Override
+    public Observable<MovieWrapper> getSimilarMovies(int movieId, int page) {
+        return RequestHelper.getRequest()
+                .getSimilarMovies(movieId, APIService.API_KEY, null, page)
+                .compose(ObservableUtils.<MovieWrapper>applyAsyncSchedulers());
     }
 }
