@@ -7,7 +7,6 @@ import com.nvmanh.themoviedb.data.MovieWrapper;
 import com.nvmanh.themoviedb.data.source.MoviesRepository;
 import com.nvmanh.themoviedb.data.source.remote.APIService;
 import com.nvmanh.themoviedb.utils.Common;
-import com.nvmanh.themoviedb.utils.LocalSubscribe;
 import com.nvmanh.themoviedb.utils.SimpleSubscribe;
 import com.nvmanh.themoviedb.utils.schedulers.BaseSchedulerProvider;
 import java.util.List;
@@ -50,7 +49,7 @@ public class MoviesPresenter implements MoviesContract.Presenter {
                                 || movieWrapper.getResults() == null) {
                             return;
                         }
-                        if(page == 1) mMoviesView.clear();
+                        if (page == 1) mMoviesView.clear();
                         mMoviesView.setTotal(movieWrapper.getTotalResults());
                         mMoviesView.setCurrentPage(movieWrapper.getPage());
                         List<Movie> movies = movieWrapper.getResults();
@@ -71,7 +70,7 @@ public class MoviesPresenter implements MoviesContract.Presenter {
         Subscription subscription = mMoviesRepository.getFavorites(page, APIService.DEFAULT_LIMIT)
                 .subscribeOn(mBaseSchedulerProvider.computation())
                 .observeOn(mBaseSchedulerProvider.ui())
-                .subscribe(new LocalSubscribe<MovieWrapper>() {
+                .subscribe(new SimpleSubscribe<MovieWrapper>() {
 
                     @Override
                     public void onError(Throwable e) {
@@ -82,7 +81,7 @@ public class MoviesPresenter implements MoviesContract.Presenter {
                     @Override
                     public void onSuccess(MovieWrapper movieWrapper) {
                         if (movieWrapper.getPage() == mMoviesView.getCurrentPage()) return;
-                        if(page == 1) mMoviesView.clear();
+                        if (page == 1) mMoviesView.clear();
                         mMoviesView.hideLoading();
                         mMoviesView.setTotal(movieWrapper.getTotalResults());
                         mMoviesView.setCurrentPage(movieWrapper.getPage());

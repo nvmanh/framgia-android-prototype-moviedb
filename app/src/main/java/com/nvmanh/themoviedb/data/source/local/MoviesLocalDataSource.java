@@ -75,6 +75,7 @@ public class MoviesLocalDataSource implements MoviesDataSource {
             public void call(Subscriber<? super List<Movie>> subscriber) {
                 try {
                     subscriber.onNext(mDatabaseHelper.getCachedDao(Movie.class).queryForAll());
+                    subscriber.onCompleted();
                 } catch (SQLException e) {
                     subscriber.onError(e);
                 }
@@ -114,6 +115,7 @@ public class MoviesLocalDataSource implements MoviesDataSource {
                     List<Movie> movies = dao.query(queryBuilder.prepare());
                     wrapper.setResults(movies);
                     subscriber.onNext(wrapper);
+                    subscriber.onCompleted();
                 } catch (SQLException e) {
                     subscriber.onError(e);
                 }
@@ -130,6 +132,7 @@ public class MoviesLocalDataSource implements MoviesDataSource {
                     subscriber.onNext(mDatabaseHelper.getCachedDao(Movie.class)
                             .queryForEq(MoviesPersistenceContract.MovieEntry.COLUMN_NAME_FAVORITE,
                                     1));
+                    subscriber.onCompleted();
                 } catch (SQLException e) {
                     subscriber.onError(e);
                 }

@@ -1,5 +1,6 @@
 package com.nvmanh.themoviedb.main;
 
+import android.content.res.Configuration;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;

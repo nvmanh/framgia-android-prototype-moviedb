@@ -2,6 +2,8 @@ package com.nvmanh.themoviedb.main.favorites;
 
 import android.os.Bundle;
 import android.view.View;
+import com.nvmanh.themoviedb.App;
+import com.nvmanh.themoviedb.R;
 import com.nvmanh.themoviedb.base.BaseFragment;
 import com.nvmanh.themoviedb.data.Movie;
 import java.util.List;
@@ -37,6 +39,11 @@ public class FavoritesFragment extends BaseFragment {
         }
         clear();
         mPresenter.loadFavorites(1);
+    }
+
+    @Override
+    public String getPageTitle() {
+        return App.self().getString(R.string.favorite_movies);
     }
 
     @Override

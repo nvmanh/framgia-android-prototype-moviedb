@@ -31,7 +31,6 @@ public class MoviesPager extends FragmentPagerAdapter {
 
     @Override
     public CharSequence getPageTitle(int position) {
-        return App.self()
-                .getString(position == 0 ? R.string.playing_movies : R.string.favorite_movies);
+        return getItem(position).getPageTitle();
     }
 }

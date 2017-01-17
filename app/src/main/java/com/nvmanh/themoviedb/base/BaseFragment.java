@@ -9,11 +9,9 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import com.nvmanh.themoviedb.App;
 import com.nvmanh.themoviedb.R;
 import com.nvmanh.themoviedb.data.Movie;
@@ -22,7 +20,6 @@ import com.nvmanh.themoviedb.detail.MovieDetailActivity;
 import com.nvmanh.themoviedb.main.LoadingDialog;
 import com.nvmanh.themoviedb.main.MoviesAdapter;
 import com.nvmanh.themoviedb.main.MoviesContract;
-
 import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -141,7 +138,7 @@ public abstract class BaseFragment extends Fragment implements MoviesContract.Vi
         if (mPresenter == null) return;
         mPresenter.unSubscribe();
         mPresenter.setView(this);
-        if (binding ==null || binding.list.getAdapter().getItemCount() != 0) {
+        if (binding == null || binding.list.getAdapter().getItemCount() != 0) {
             return;
         }
         mPresenter.subscribe();
@@ -197,4 +194,8 @@ public abstract class BaseFragment extends Fragment implements MoviesContract.Vi
         setCurrentPage(0);
         binding.list.setAdapter(new MoviesAdapter());
     }
+
+    //Notice: should use app context, if not the fragment
+    // context may be null when fragment not attached to activity yet
+    public abstract String getPageTitle();
 }

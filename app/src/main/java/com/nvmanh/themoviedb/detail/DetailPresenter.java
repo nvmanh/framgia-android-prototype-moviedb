@@ -67,6 +67,7 @@ public class DetailPresenter implements DetailContract.Presenter {
                 .subscribe(new SimpleSubscribe<MovieWrapper>() {
                     @Override
                     public void onSuccess(MovieWrapper movieWrapper) {
+                        isLoading = false;
                         if (movieWrapper == null
                                 || movieWrapper.getResults() == null
                                 || movieWrapper.getResults().isEmpty()) {
