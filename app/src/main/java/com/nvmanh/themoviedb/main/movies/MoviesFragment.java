@@ -23,15 +23,6 @@ public class MoviesFragment extends BaseFragment {
     }
 
     @Override
-    public void showNoMovie() {
-    }
-
-    @Override
-    protected void onLoad(int page) {
-        mPresenter.loadMovies(page);
-    }
-
-    @Override
     public String getPageTitle() {
         return App.self().getString(R.string.playing_movies);
     }

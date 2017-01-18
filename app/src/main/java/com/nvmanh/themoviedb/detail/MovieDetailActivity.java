@@ -42,7 +42,7 @@ public class MovieDetailActivity extends BaseActivity {
                     R.id.container);
 
         }
-        mPresenter = new DetailPresenter(movie, movieDetailFragment, Injection.provideTasksRepository(this), Injection.provideSchedulerProvider());
+        mPresenter = new DetailPresenter(movie, movieDetailFragment, Injection.provideTasksRepository(this));
     }
 
     @Override

@@ -26,30 +26,13 @@ public class FavoritesFragment extends BaseFragment {
     }
 
     @Override
-    protected void onLoad(int page) {
-        mPresenter.loadFavorites(page);
-    }
-
-    @Override
     public void onTabSelected() {
-        super.onTabSelected();
-        showLoading();
-        if (binding == null || binding.list.getAdapter().getItemCount() > 0) {
-            hideLoading();
-        }
         clear();
-        mPresenter.loadFavorites(1);
+        super.onTabSelected();
     }
 
     @Override
     public String getPageTitle() {
         return App.self().getString(R.string.favorite_movies);
-    }
-
-    @Override
-    public void showNoMovie() {
-        hideLoading();
-        binding.list.setVisibility(View.GONE);
-        binding.noMovie.setVisibility(View.VISIBLE);
     }
 }

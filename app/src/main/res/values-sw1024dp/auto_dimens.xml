@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<dimen name="activity_horizontal_margin">45.51dp</dimen>
+	<dimen name="activity_vertical_margin">45.51dp</dimen>
+	<dimen name="custom_tab_layout_height">204.80dp</dimen>
+	<dimen name="dp_1">2.84dp</dimen>
+	<dimen name="dp_10">28.44dp</dimen>
+	<dimen name="dp_120">341.33dp</dimen>
+	<dimen name="dp_2">5.69dp</dimen>
+	<dimen name="dp_20">56.89dp</dimen>
+	<dimen name="dp_200">568.89dp</dimen>
+	<dimen name="dp_3">8.53dp</dimen>
+	<dimen name="dp_30">85.33dp</dimen>
+	<dimen name="dp_300">853.33dp</dimen>
+	<dimen name="dp_40">113.78dp</dimen>
+	<dimen name="dp_5">14.22dp</dimen>
+	<dimen name="dp_60">170.67dp</dimen>
+	<dimen name="dp_8">22.76dp</dimen>
+	<dimen name="dp_80">227.56dp</dimen>
+	<dimen name="tab_max_width">750.93dp</dimen>
+	<dimen name="tab_padding_bottom">45.51dp</dimen>
+	<dimen name="dp_24">68.27sp</dimen>
+	<dimen name="sp_10">28.44sp</dimen>
+	<dimen name="sp_12">34.13sp</dimen>
+	<dimen name="sp_14">39.82sp</dimen>
+	<dimen name="sp_16">45.51sp</dimen>
+	<dimen name="sp_18">51.20sp</dimen>
+	<dimen name="sp_20">56.89sp</dimen>
+	<dimen name="tab_label">39.82sp</dimen>
+</resources>

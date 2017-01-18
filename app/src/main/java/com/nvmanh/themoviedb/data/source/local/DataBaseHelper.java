@@ -13,10 +13,6 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * DataBaseHelper
- * Created by ThongDang on 6/1/16.
- */
 public class DataBaseHelper extends OrmLiteSqliteOpenHelper {
     private static final String DATABASE_NAME = "the_movie.db";
     private static final int DATABASE_VERSION = 2;

@@ -3,6 +3,7 @@ package com.nvmanh.themoviedb.utils;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.text.TextUtils;
 import com.nvmanh.themoviedb.App;
 import com.nvmanh.themoviedb.data.Genre;
 import com.nvmanh.themoviedb.data.Movie;
@@ -26,6 +27,8 @@ public class Common {
     public static void updateGenres(Movie movie, MoviesRepository repository) {
         StringBuilder builder = new StringBuilder();
         if (genreMap == null || genreMap.isEmpty()) loadGenres(repository);
+        if (!TextUtils.isEmpty(movie.getGenreList())) return;
+        if (movie.getGenreIds() == null) return;
         for (int id : movie.getGenreIds()) {
             if (!genreMap.containsKey(id)) continue;
             builder.append(genreMap.get(id).getName()).append(", ");

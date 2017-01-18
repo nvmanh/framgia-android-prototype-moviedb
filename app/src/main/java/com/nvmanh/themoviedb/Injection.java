@@ -35,7 +35,7 @@ public class Injection {
 
     public static MoviesRepository provideTasksRepository(@NonNull Context context) {
         checkNotNull(context);
-        return MoviesRepository.getInstance(MoviesRemoteDataSource.getInstance(),
+        return MoviesRepository.getInstance(MoviesRemoteDataSource.getInstance(provideSchedulerProvider()),
                 MoviesLocalDataSource.getInstance(context, provideSchedulerProvider()));
     }
 

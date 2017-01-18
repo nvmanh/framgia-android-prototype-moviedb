@@ -26,8 +26,7 @@ public class MainActivity extends BaseActivity {
     }
 
     private void setupView() {
-        mPresenter = new MoviesPresenter(Injection.provideTasksRepository(this),
-                Injection.provideSchedulerProvider());
+        mPresenter = new MoviesPresenter(Injection.provideTasksRepository(this));
         setSupportActionBar(mMainBinding.toolbar);
         mMainBinding.tabLayout.newTab().setText(R.string.playing_movies);
         mMainBinding.tabLayout.newTab().setText(R.string.favorite_movies);

@@ -1,7 +1,9 @@
 package com.nvmanh.themoviedb.main;
 
+import android.util.Log;
 import com.android.annotations.NonNull;
 import com.google.common.base.Preconditions;
+import com.google.common.eventbus.Subscribe;
 import com.nvmanh.themoviedb.data.Movie;
 import com.nvmanh.themoviedb.data.MovieWrapper;
 import com.nvmanh.themoviedb.data.source.MoviesRepository;
@@ -20,90 +22,52 @@ import rx.subscriptions.CompositeSubscription;
 public class MoviesPresenter implements MoviesContract.Presenter {
     private MoviesRepository mMoviesRepository;
     private MoviesContract.View mMoviesView;
-    private BaseSchedulerProvider mBaseSchedulerProvider;
     @android.support.annotation.NonNull
     private CompositeSubscription mSubscriptions;
 
-    public MoviesPresenter(@NonNull MoviesRepository moviesRepository,
-            @NonNull BaseSchedulerProvider schedulerProvider) {
+    public MoviesPresenter(@NonNull MoviesRepository moviesRepository) {
         this.mMoviesRepository = moviesRepository;
-        this.mBaseSchedulerProvider = schedulerProvider;
         mSubscriptions = new CompositeSubscription();
     }
 
     @Override
     public void loadMovies(final int page) {
-        if (!Common.isConnectingToInternet()) {
+        if (!Common.isConnectingToInternet() && !mMoviesView.isFavoriteScreen()) {
             mMoviesView.showNetworkError();
             return;
         }
         mMoviesView.showLoading();
-        Subscription subscription = mMoviesRepository.getMovies(page, APIService.DEFAULT_LIMIT)
-                .subscribeOn(mBaseSchedulerProvider.computation())
-                .observeOn(mBaseSchedulerProvider.ui())
-                .subscribe(new SimpleSubscribe<MovieWrapper>() {
-                    @Override
-                    public void onSuccess(MovieWrapper movieWrapper) {
-                        if (movieWrapper == null
-                                || movieWrapper.getPage() == mMoviesView.getCurrentPage()
-                                || movieWrapper.getResults() == null) {
-                            return;
-                        }
-                        if (page == 1) mMoviesView.clear();
-                        mMoviesView.setTotal(movieWrapper.getTotalResults());
-                        mMoviesView.setCurrentPage(movieWrapper.getPage());
-                        List<Movie> movies = movieWrapper.getResults();
-                        Common.updateGenres(movies, mMoviesRepository);
-                        mMoviesView.showMovies(movies);
-                    }
+        SimpleSubscribe<MovieWrapper> simpleSubscribe = new SimpleSubscribe<MovieWrapper>() {
+            @Override
+            public void onSuccess(MovieWrapper movieWrapper) {
+                if (movieWrapper == null
+                        || movieWrapper.getPage() == mMoviesView.getCurrentPage()
+                        || movieWrapper.getResults() == null) {
+                    if (page == 1) mMoviesView.showNoMovie();
+                    return;
+                }
+                if (page == 1) mMoviesView.clear();
+                mMoviesView.setTotal(movieWrapper.getTotalResults());
+                mMoviesView.setCurrentPage(movieWrapper.getPage());
+                List<Movie> movies = movieWrapper.getResults();
+                Common.updateGenres(movies, mMoviesRepository);
+                mMoviesView.showMovies(movies);
+            }
 
-                    @Override
-                    public void onError(Throwable e) {
-                        mMoviesView.showError(e);
-                    }
-                });
+            @Override
+            public void onError(Throwable e) {
+                mMoviesView.showError(e);
+            }
+        };
+        Subscription subscription;
+        if (mMoviesView.isFavoriteScreen()) {
+            subscription = mMoviesRepository.getFavorites(page, APIService.DEFAULT_LIMIT)
+                    .subscribe(simpleSubscribe);
+        } else {
+            subscription = mMoviesRepository.getMovies(page, APIService.DEFAULT_LIMIT)
+                    .subscribe(simpleSubscribe);
+        }
         mSubscriptions.add(subscription);
-    }
-
-    @Override
-    public void loadFavorites(final int page) {
-        Subscription subscription = mMoviesRepository.getFavorites(page, APIService.DEFAULT_LIMIT)
-                .subscribeOn(mBaseSchedulerProvider.computation())
-                .observeOn(mBaseSchedulerProvider.ui())
-                .subscribe(new SimpleSubscribe<MovieWrapper>() {
-
-                    @Override
-                    public void onError(Throwable e) {
-                        mMoviesView.hideLoading();
-                        mMoviesView.showError(e);
-                    }
-
-                    @Override
-                    public void onSuccess(MovieWrapper movieWrapper) {
-                        if (movieWrapper.getPage() == mMoviesView.getCurrentPage()) return;
-                        if (page == 1) mMoviesView.clear();
-                        mMoviesView.hideLoading();
-                        mMoviesView.setTotal(movieWrapper.getTotalResults());
-                        mMoviesView.setCurrentPage(movieWrapper.getPage());
-                        if (movieWrapper.getResults() == null || movieWrapper.getResults()
-                                .isEmpty()) {
-                            mMoviesView.showNoMovie();
-                        } else {
-                            mMoviesView.showMovies(movieWrapper.getResults());
-                        }
-                    }
-                });
-        mSubscriptions.add(subscription);
-    }
-
-    @Override
-    public void delete(int movieId) {
-        mMoviesRepository.removeFavorite(movieId);
-    }
-
-    @Override
-    public void deleteAll() {
-        mMoviesRepository.removeAllFavorites();
     }
 
     @Override
@@ -120,11 +84,7 @@ public class MoviesPresenter implements MoviesContract.Presenter {
 
     @Override
     public void subscribe() {
-        if (mMoviesView.isFavoriteScreen()) {
-            loadFavorites(1);
-        } else {
-            loadMovies(1);
-        }
+        loadMovies(1);
     }
 
     @Override

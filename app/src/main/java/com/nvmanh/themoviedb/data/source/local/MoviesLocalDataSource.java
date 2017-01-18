@@ -48,12 +48,14 @@ public class MoviesLocalDataSource implements MoviesDataSource {
     @NonNull
     private final DataBaseHelper mDatabaseHelper;
 
+    private BaseSchedulerProvider mProvider;
+
     // Prevent direct instantiation.
     private MoviesLocalDataSource(@NonNull Context context,
             @NonNull BaseSchedulerProvider schedulerProvider) {
         checkNotNull(context, "context cannot be null");
-        checkNotNull(schedulerProvider, "scheduleProvider cannot be null");
-        mDatabaseHelper = OpenHelperManager.getHelper(App.self(), DataBaseHelper.class);
+        mProvider = checkNotNull(schedulerProvider, "scheduleProvider cannot be null");
+        mDatabaseHelper = OpenHelperManager.getHelper(context, DataBaseHelper.class);
     }
 
     public static MoviesLocalDataSource getInstance(@NonNull Context context,
@@ -80,7 +82,7 @@ public class MoviesLocalDataSource implements MoviesDataSource {
                     subscriber.onError(e);
                 }
             }
-        });
+        }).subscribeOn(mProvider.computation()).observeOn(mProvider.ui());
     }
 
     @Override
@@ -94,7 +96,7 @@ public class MoviesLocalDataSource implements MoviesDataSource {
                     subscriber.onError(e);
                 }
             }
-        });
+        }).subscribeOn(mProvider.computation()).observeOn(mProvider.ui());
     }
 
     @Override
@@ -120,7 +122,7 @@ public class MoviesLocalDataSource implements MoviesDataSource {
                     subscriber.onError(e);
                 }
             }
-        });
+        }).subscribeOn(mProvider.computation()).observeOn(mProvider.ui());
     }
 
     @Override
@@ -137,7 +139,7 @@ public class MoviesLocalDataSource implements MoviesDataSource {
                     subscriber.onError(e);
                 }
             }
-        });
+        }).subscribeOn(mProvider.computation()).observeOn(mProvider.ui());
     }
 
     @Override

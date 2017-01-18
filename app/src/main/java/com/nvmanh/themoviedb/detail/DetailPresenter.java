@@ -17,18 +17,15 @@ import rx.subscriptions.CompositeSubscription;
 public class DetailPresenter implements DetailContract.Presenter {
     private Movie mMovie;
     private MoviesRepository mRepository;
-    private BaseSchedulerProvider mProvider;
     private DetailContract.View mView;
     private CompositeSubscription mSubscription;
     private int currentPage = 0;
     private boolean isLoading = false;
     private int mTotalPage = -1;
 
-    public DetailPresenter(Movie movie, DetailContract.View view, MoviesRepository repository,
-            BaseSchedulerProvider provider) {
+    public DetailPresenter(Movie movie, DetailContract.View view, MoviesRepository repository) {
         this.mMovie = movie;
         this.mRepository = repository;
-        this.mProvider = provider;
         this.mView = view;
         mSubscription = new CompositeSubscription();
         mView.setPresenter(this);
@@ -62,8 +59,6 @@ public class DetailPresenter implements DetailContract.Presenter {
         }
         isLoading = true;
         Subscription subscription = mRepository.getSimilarMovies(mMovie.getId(), currentPage + 1)
-                .subscribeOn(mProvider.computation())
-                .observeOn(mProvider.ui())
                 .subscribe(new SimpleSubscribe<MovieWrapper>() {
                     @Override
                     public void onSuccess(MovieWrapper movieWrapper) {

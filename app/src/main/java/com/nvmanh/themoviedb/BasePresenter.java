@@ -17,8 +17,13 @@
 package com.nvmanh.themoviedb;
 
 public interface BasePresenter {
-
+    /**
+     * subscribe event using Rx
+     */
     void subscribe();
 
+    /**
+     * unsubscribe event using Rx
+     */
     void unSubscribe();
 }

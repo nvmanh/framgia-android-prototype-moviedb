@@ -20,6 +20,7 @@ import com.nvmanh.themoviedb.data.Genre;
 import com.nvmanh.themoviedb.data.Movie;
 import com.nvmanh.themoviedb.data.MovieWrapper;
 import com.nvmanh.themoviedb.data.source.MoviesDataSource;
+import com.nvmanh.themoviedb.utils.schedulers.BaseSchedulerProvider;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -36,20 +37,22 @@ public class MoviesRemoteDataSource implements MoviesDataSource {
 
     //using this for caching data for test, but not production
     private final static Map<Integer, Movie> TASKS_SERVICE_DATA;
+    private BaseSchedulerProvider mProvider;
 
     static {
         TASKS_SERVICE_DATA = new LinkedHashMap<>(0);
     }
 
-    public static MoviesRemoteDataSource getInstance() {
+    public static MoviesRemoteDataSource getInstance(BaseSchedulerProvider provider) {
         if (INSTANCE == null) {
-            INSTANCE = new MoviesRemoteDataSource();
+            INSTANCE = new MoviesRemoteDataSource(provider);
         }
         return INSTANCE;
     }
 
     // Prevent direct instantiation.
-    private MoviesRemoteDataSource() {
+    private MoviesRemoteDataSource(BaseSchedulerProvider provider) {
+        mProvider = provider;
     }
 
     private List<Movie> toListMovie() {
@@ -67,7 +70,7 @@ public class MoviesRemoteDataSource implements MoviesDataSource {
             public void call(Subscriber<? super List<Movie>> subscriber) {
                 subscriber.onNext(toListMovie());
             }
-        });
+        }).subscribeOn(mProvider.computation()).observeOn(mProvider.ui());
     }
 
     @Override
@@ -77,14 +80,16 @@ public class MoviesRemoteDataSource implements MoviesDataSource {
             public void call(Subscriber<? super Movie> subscriber) {
                 subscriber.onNext(TASKS_SERVICE_DATA.get(id));
             }
-        });
+        }).subscribeOn(mProvider.computation()).observeOn(mProvider.ui());
     }
 
     @Override
     public Observable<MovieWrapper> getMovies(int page, int limit) {
         return RequestHelper.getRequest()
                 .getPlayingMovies(APIService.API_KEY, null, page)
-                .compose(ObservableUtils.<MovieWrapper>applyAsyncSchedulers());
+                .compose(ObservableUtils.<MovieWrapper>applyAsyncSchedulers())
+                .subscribeOn(mProvider.computation())
+                .observeOn(mProvider.ui());
     }
 
     @Override
@@ -136,6 +141,8 @@ public class MoviesRemoteDataSource implements MoviesDataSource {
     public Observable<MovieWrapper> getSimilarMovies(int movieId, int page) {
         return RequestHelper.getRequest()
                 .getSimilarMovies(movieId, APIService.API_KEY, null, page)
-                .compose(ObservableUtils.<MovieWrapper>applyAsyncSchedulers());
+                .compose(ObservableUtils.<MovieWrapper>applyAsyncSchedulers())
+                .subscribeOn(mProvider.computation())
+                .observeOn(mProvider.ui());
     }
 }

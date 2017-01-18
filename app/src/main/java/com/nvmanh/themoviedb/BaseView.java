@@ -18,6 +18,10 @@ package com.nvmanh.themoviedb;
 
 public interface BaseView<T> {
 
+    /**
+     * set presenter to view
+     *
+     * @param presenter {@link BasePresenter}
+     */
     void setPresenter(T presenter);
-
 }

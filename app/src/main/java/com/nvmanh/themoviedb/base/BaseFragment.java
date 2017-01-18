@@ -58,15 +58,13 @@ public abstract class BaseFragment extends Fragment implements MoviesContract.Vi
                 if (!mLoading && lastVisibleItem == totalItem - 1) {
                     mLoading = true;
                     // Scrolled to bottom. Do something here.
-                    onLoad(mCurrentPage + 1);
-                    mLoading = false;
+                    mPresenter.loadMovies(mCurrentPage + 1);
+                    mLoading = true;
                 }
             }
         });
         return binding.getRoot();
     }
-
-    protected abstract void onLoad(int page);
 
     @Override
     public void setTotal(int total) {
@@ -81,6 +79,7 @@ public abstract class BaseFragment extends Fragment implements MoviesContract.Vi
     @Override
     public void showNetworkError() {
         mLoading = false;
+        if (isFavoriteScreen()) return;
         hideLoading();
         buildAlertIfNotExist(getString(R.string.network_error));
         mAlertDialog.show();
@@ -193,6 +192,14 @@ public abstract class BaseFragment extends Fragment implements MoviesContract.Vi
         if (binding == null) return;
         setCurrentPage(0);
         binding.list.setAdapter(new MoviesAdapter());
+    }
+
+    @Override
+    public void showNoMovie() {
+        if (!isFavoriteScreen()) return;
+        hideLoading();
+        binding.list.setVisibility(View.GONE);
+        binding.noMovie.setVisibility(View.VISIBLE);
     }
 
     //Notice: should use app context, if not the fragment
